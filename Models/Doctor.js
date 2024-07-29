@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 
+const WorkingHoursSchema = new mongoose.Schema({
+    start: { type: String, required: true },  
+    end: { type: String, required: true }     
+  });
+
 const DoctorSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -14,7 +19,7 @@ const DoctorSchema = new mongoose.Schema({
     },
     experience: { type: String, required: true },
     fees: { type: Number, required: true },
-    workingHours: { type: Object, required: true }
+    workingHours: { type: WorkingHoursSchema, required: true } 
 }, { timestamps: true });
 
 const Doctor = mongoose.model("Doctor", DoctorSchema);

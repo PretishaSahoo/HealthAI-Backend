@@ -34,5 +34,7 @@ connectToMongo();
 
 
 const UserRouter = require("./Routes/User");
+const DoctorRouter = require("./Routes/Doctor");
 
 app.use("/api/user" , UserRouter.router);
+app.use("/api/doctor" , DoctorRouter.router);
