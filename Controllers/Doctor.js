@@ -46,3 +46,14 @@ exports.editDoctor = async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   };
+
+
+  exports.fetchAllDoctors = async (req, res) => {
+    try {
+      const doctors = await Doctor.find({});
+      res.status(200).json({ doctors });
+    } catch (error) {
+      console.error("Fetch all doctors error:", error.message);
+      res.status(500).json({ message: "Server error" });
+    }
+  };
