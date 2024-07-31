@@ -40,3 +40,33 @@ exports.fetchUser = async (req, res) => {
     }
 };
 
+exports.bookAppointment = async(req,res)=>{
+    try {
+        const {doctorUid , userUid , date ,time } = req.body ;
+        const doctor = await Doctor.findOne({uid : doctorUid});
+        const doctorUser = await User.findOne({uid : doctorUid});
+        const user = await User.findOne({uid : userUid});
+        if (doctor.workingHours.start>time || doctor.workingHours.end<time  ){
+            res.status(200).json({message:"Oops this time slot is not available !"})
+        }
+        else{
+            const appointment = {
+                doctorUid : doctorUid  ,
+                userUid : userUid , 
+                date :date ,
+                time :time ,
+                status :"Scheduled",
+                videoCallLink:""
+            }
+            doctorUser.notifications.push(`An appointment is requested by ${user.name} on ${date } at ${time}`);
+            doctorUser.appointments.push(appointment);
+            user.notifications.push(`Your appointment requested successfully to Dr. ${doctorUser.name} on ${date } at ${time}. Kindly wait for Doctors approval`);
+            user.appointments.push(appointment);
+            doctorUser.save() ;
+            user.save() ;
+            res.status(200).json({message:"Appointment Scheduled Successfully!"});
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
