@@ -57,3 +57,94 @@ exports.editDoctor = async (req, res) => {
       res.status(500).json({ message: "Server error" });
     }
   };
+  exports.acceptAppointment = async (req, res) => {
+    try {
+        const { doctorUid, userUid, date, time } = req.body;
+        const doctorUser = await User.findOne({ uid: doctorUid });
+        const user = await User.findOne({ uid: userUid });
+
+      let appointmentFound = false;
+      
+      doctorUser.appointments.forEach(appointment => {
+          if (
+              appointment.userUid === userUid &&
+              appointment.date === date &&
+              appointment.time === time
+          ) {
+              appointment.status = "Accepted";
+              appointmentFound = true;
+          }
+      });
+
+      user.appointments.forEach(appointment => {
+          if (
+              appointment.doctorUid === doctorUid &&
+              appointment.date === date &&
+              appointment.time === time
+          ) {
+              appointment.status = "Accepted";
+              appointmentFound = true;
+          }
+      });
+
+      if (appointmentFound) {
+            doctorUser.notifications.push(`You have accepted an appointment with ${user.name} on ${date} at ${time}`);
+            user.notifications.push(`Your appointment with Dr. ${doctorUser.name} on ${date} at ${time} has been accepted`);
+            await doctorUser.save();
+            await user.save();
+
+            res.status(200).json({ message: "Appointment accepted successfully!" });
+        } else {
+            res.status(404).json({ message: "Appointment not found" });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+exports.rejectAppointment = async (req, res) => {
+  try {
+      const { doctorUid, userUid, date, time } = req.body;
+      
+      const doctorUser = await User.findOne({ uid: doctorUid });
+      const user = await User.findOne({ uid: userUid });
+
+      let appointmentFound = false;
+      
+      doctorUser.appointments.forEach(appointment => {
+          if (
+              appointment.userUid === userUid &&
+              appointment.date === date &&
+              appointment.time === time
+          ) {
+              appointment.status = "Rejected";
+              appointmentFound = true;
+          }
+      });
+
+      user.appointments.forEach(appointment => {
+          if (
+              appointment.doctorUid === doctorUid &&
+              appointment.date === date &&
+              appointment.time === time
+          ) {
+              appointment.status = "Rejected";
+              appointmentFound = true;
+          }
+      });
+
+      if (appointmentFound) {
+          doctorUser.notifications.push(`You have rejected an appointment with ${user.name} on ${date} at ${time}`);
+          user.notifications.push(`Your appointment with Dr. ${doctorUser.name} on ${date} at ${time} has been rejected`);
+
+          await doctorUser.save();
+          await user.save();
+
+          res.status(200).json({ message: "Appointment rejected successfully!" });
+      } else {
+          res.status(404).json({ message: "Appointment not found" });
+      }
+  } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+  }
+};

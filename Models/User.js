@@ -7,10 +7,12 @@ const MedicineReminderSchema = new mongoose.Schema({
 
 const AppointmentSchema = new mongoose.Schema({
   doctorUid: { type: String, required: true },
+  doctorName: { type: String, required: true },
   userUid: { type: String, required: true },
-  date: { type: Date, required: true },
+  userName: { type: String, required: true },
+  date: { type: String, required: true },
   time: { type: String, required: true },
-  status: { type: String, required: true, enum: ['Scheduled', 'Completed', 'Cancelled'], default: 'Scheduled' },
+  status: { type: String, required: true, enum: ['Scheduled', 'Completed', 'Cancelled', 'Accepted', 'Rejected'], default: 'Scheduled' },
   videoCallLink: { type: String },
 });
 

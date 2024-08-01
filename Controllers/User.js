@@ -51,13 +51,15 @@ exports.bookAppointment = async(req,res)=>{
         }
         else{
             const appointment = {
-                doctorUid : doctorUid  ,
-                userUid : userUid , 
-                date :date ,
-                time :time ,
-                status :"Scheduled",
-                videoCallLink:""
-            }
+                doctorUid: doctorUid,
+                doctorName: doctorUser.name,
+                userUid: userUid,
+                userName: user.name,
+                date: date,
+                time: time,
+                status: "Scheduled",
+                videoCallLink: ""
+            };
             doctorUser.notifications.push(`An appointment is requested by ${user.name} on ${date } at ${time}`);
             doctorUser.appointments.push(appointment);
             user.notifications.push(`Your appointment requested successfully to Dr. ${doctorUser.name} on ${date } at ${time}. Kindly wait for Doctors approval`);
