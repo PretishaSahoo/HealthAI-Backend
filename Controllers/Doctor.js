@@ -41,8 +41,8 @@ exports.editDoctor = async (req, res) => {
         return res.status(404).json({ message: "Doctor not found" });
       }
       const updatedUser = await User.findOneAndUpdate(
-        { uid },
-        {email, phone },
+        {  uid: req.body.uid  },
+        {email:req.body.email, phone :req.body.phone},
         { new: true }
       );
   
