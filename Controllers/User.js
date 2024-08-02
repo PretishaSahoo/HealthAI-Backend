@@ -72,3 +72,49 @@ exports.bookAppointment = async(req,res)=>{
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
+
+exports.markNotificationAsRead = async (req, res) => {
+  try {
+    const { uid, notification } = req.body;
+
+    const user = await User.findOne({ uid });
+    if (user) {
+      user.notifications = user.notifications.filter(n => n !== notification);
+      if (!user.seenNotifications.includes(notification)) {
+        user.seenNotifications.push(notification);
+      }
+      await user.save();
+
+      res.status(200).json({ message: 'Notification marked as read' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+exports.markAllNotificationsAsRead = async (req, res) => {
+  try {
+    const { uid } = req.body;
+
+    const user = await User.findOne({ uid });
+    if (user) {
+      user.notifications.forEach(notification => {
+        if (!user.seenNotifications.includes(notification)) {
+          user.seenNotifications.push(notification);
+        }
+      });
+      user.notifications = [];
+      await user.save();
+
+      res.status(200).json({ message: 'All notifications marked as read' });
+    } else {
+      res.status(404).json({ message: 'User not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
