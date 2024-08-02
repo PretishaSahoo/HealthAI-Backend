@@ -118,3 +118,43 @@ exports.markAllNotificationsAsRead = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.addMedicine = async (req, res) => {
+    try {
+      const { medicine, time, uid } = req.body;
+      const user = await User.findOne({ uid }); 
+  
+      if (user) {
+        user.medicineReminders.push({ medicine, time });
+        user.notifications.push(`Medicine Reminder Added: ${medicine} at ${time}`);
+        await user.save();
+        res.status(200).json({ message: 'Medicine reminder added successfully' });
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+
+  exports.deleteMedicine = async (req, res) => {
+    try {
+      const { medicine, time, uid } = req.body;
+      const user = await User.findOne({ uid }); 
+  
+      if (user) {
+        user.medicineReminders = user.medicineReminders.filter(
+          (reminder) => !(reminder.medicine === medicine && reminder.time === time)
+        );
+        user.notifications.push(`Medicine Reminder Removed: ${medicine} at ${time}`);
+        await user.save();
+        res.status(200).json({ message: 'Medicine reminder deleted successfully' });
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
