@@ -21,7 +21,7 @@ exports.applyDoctor = async (req, res) => {
       workingHours,
     });
     await newDoctor.save();
-    await User.findOneAndUpdate({ uid }, { isDoctor: true });
+    await User.findOneAndUpdate({ uid }, { isDoctor: true, name, phone });
     res.status(201).json({ message: "Applied as doctor successfully", doctor: newDoctor });
   } catch (error) {
     console.error("Error applying as a  doctor:", error);
@@ -40,6 +40,16 @@ exports.editDoctor = async (req, res) => {
       if (!updatedDoctor) {
         return res.status(404).json({ message: "Doctor not found" });
       }
+      const updatedUser = await User.findOneAndUpdate(
+        { uid },
+        { name, email, phone },
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+        
       res.status(200).json({ message: "Doctor profile updated successfully", doctor: updatedDoctor });
     } catch (error) {
       console.error("Error editing doctor profile:", error);

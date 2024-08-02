@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MedicineReminderSchema = new mongoose.Schema({
-  medicine: { type: String, required: true },
+  medicine: { type: String, required: true }, 
   time: { type: String, required: true }, 
 });
 
