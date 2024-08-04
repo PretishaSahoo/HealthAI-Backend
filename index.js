@@ -4,8 +4,8 @@ const dotenv = require("dotenv");
 const http = require("http");
 const { Server } = require("socket.io");
 const connectToMongo = require("./db");
-const checkAndSendReminders = require('./NotificationManagement/Notifications'); 
-const cron = require('node-cron');
+
+const isLocal = process.env.MODE === 'development';
 
 dotenv.config();
 
@@ -52,10 +52,14 @@ const DoctorRouter = require("./Routes/Doctor");
 app.use("/api/user", UserRouter.router);
 app.use("/api/doctor", DoctorRouter.router);
 
-// Scheduled the checkAndSendReminders function to run every minute
-cron.schedule('* * * * *', () => {
-    checkAndSendReminders();
-});
+if (isLocal) {
+    const cron = require('node-cron');
+    const checkAndSendReminders = require('./NotificationManagement/Notifications');
+
+    cron.schedule('* * * * *', () => {
+        checkAndSendReminders();
+    });
+}
 
 server.listen(PORT, () => {
     console.log(`Server running on Port ${PORT}`);
