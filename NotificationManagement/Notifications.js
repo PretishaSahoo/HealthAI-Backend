@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 const sendEmailReminder = (email, message) => {
   const mailOptions = {
     from: process.env.EMAIL_USER, 
-    to: email,
+    to: email,   
     subject: 'Medicine Reminder',
     text: message
   };
@@ -55,7 +55,5 @@ const checkAndSendReminders = async () => {
   }
 };
 
-// Scheduled the cron job to run every minute to check and send notifications as an when needed.
-cron.schedule('* * * * *', checkAndSendReminders);
 
 module.exports = checkAndSendReminders;
