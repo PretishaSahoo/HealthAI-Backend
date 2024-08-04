@@ -43,7 +43,7 @@ const checkAndSendReminders = async () => {
     users.forEach(user => {
       user.medicineReminders.forEach(reminder => {
         if (reminder.time === currentTime) {
-          const message = `Reminder: It's time to take your medicine: ${reminder.medicine}.Take your medicines at time.Get well soon`;
+          const message = `Reminder: It's time to take your medicine: ${reminder.medicine} .Take your medicines at time.Get well soon`;
           if (user.email) {
             sendEmailReminder(user.email, message);
           }
