@@ -47,7 +47,7 @@ cron.schedule('* * * * *', () => {
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:3000", "https://health-ai-teal.vercel.app"],
+        origin: "*" ,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         credentials: true
     }
@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
       io.to(room).emit("user-joined", { id: socket.id, role });
   
       socket.on("stream", (stream) => {
-        socket.to(room).emit("stream", stream); // Broadcast stream to other users
+        socket.to(room).emit("stream", stream); 
       });
   
       socket.on("disconnect", () => {
