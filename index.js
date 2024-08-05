@@ -44,68 +44,68 @@ cron.schedule('* * * * *', () => {
     checkAndSendReminders();
 });
 
-const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: "*" 
-    }
-});
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//     cors: {
+//         origin: "*" 
+//     }
+// });
 
 
-const rooms = new Map();
-io.on("connection", (socket) => {
-    console.log(`Socket Connected: ${socket.id}`);
+// const rooms = new Map();
+// io.on("connection", (socket) => {
+//     console.log(`Socket Connected: ${socket.id}`);
   
-    socket.on("join", ({ doctorUid, userUid, room }) => {
-      if (!rooms.has(room)) {
-        rooms.set(room, { doctor: null, user: null });
-      }
+//     socket.on("join", ({ doctorUid, userUid, room }) => {
+//       if (!rooms.has(room)) {
+//         rooms.set(room, { doctor: null, user: null });
+//       }
   
-      let role;
-      if (doctorUid) {
-        role = 'doctor';
-      } else if (userUid) {
-        role = 'user';
-      } else {
-        socket.emit("error", { message: "No valid role provided." });
-        return;
-      }
+//       let role;
+//       if (doctorUid) {
+//         role = 'doctor';
+//       } else if (userUid) {
+//         role = 'user';
+//       } else {
+//         socket.emit("error", { message: "No valid role provided." });
+//         return;
+//       }
   
-      const roomInfo = rooms.get(room);
+//       const roomInfo = rooms.get(room);
   
-      if (roomInfo[role]) {
-        socket.emit("error", { message: "Room is already occupied by someone else." });
-        return;
-      }
+//       if (roomInfo[role]) {
+//         socket.emit("error", { message: "Room is already occupied by someone else." });
+//         return;
+//       }
   
-      roomInfo[role] = socket.id;
-      socket.join(room);
+//       roomInfo[role] = socket.id;
+//       socket.join(room);
   
-      io.to(room).emit("user-joined", { id: socket.id, role });
+//       io.to(room).emit("user-joined", { id: socket.id, role });
   
-      socket.on("stream", (stream) => {
-        socket.to(room).emit("stream", stream); 
-      });
+//       socket.on("stream", (stream) => {
+//         socket.to(room).emit("stream", stream); 
+//       });
   
-      socket.on("disconnect", () => {
-        console.log(`Socket Disconnected: ${socket.id}`);
-        const roomInfo = rooms.get(room);
-        if (roomInfo) {
-          if (roomInfo.doctor === socket.id) {
-            roomInfo.doctor = null;
-          } else if (roomInfo.user === socket.id) {
-            roomInfo.user = null;
-          }
+//       socket.on("disconnect", () => {
+//         console.log(`Socket Disconnected: ${socket.id}`);
+//         const roomInfo = rooms.get(room);
+//         if (roomInfo) {
+//           if (roomInfo.doctor === socket.id) {
+//             roomInfo.doctor = null;
+//           } else if (roomInfo.user === socket.id) {
+//             roomInfo.user = null;
+//           }
   
-          if (!roomInfo.doctor && !roomInfo.user) {
-            rooms.delete(room);
-          }
-          io.to(room).emit("user-left", { id: socket.id });
-        }
-      });
-    });
-  });
+//           if (!roomInfo.doctor && !roomInfo.user) {
+//             rooms.delete(room);
+//           }
+//           io.to(room).emit("user-left", { id: socket.id });
+//         }
+//       });
+//     });
+//   });
   
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`Server running on Port ${PORT}`);
 });

@@ -40,6 +40,16 @@ exports.fetchUser = async (req, res) => {
     }
 };
 
+const generateRoomCode = ()=>{
+  const seq = "qwertyuiopasdfghjklzxcvbnm1234567890"
+  let code = "";
+  for(let i = 0 ; i<10; i++){
+      let randomIdx =Math.floor( Math.random() * seq.length) ;
+      code += seq[randomIdx];
+  }
+  return code;
+}
+
 exports.bookAppointment = async(req,res)=>{
     try {
         const {doctorUid , userUid , date ,time } = req.body ;
@@ -50,6 +60,7 @@ exports.bookAppointment = async(req,res)=>{
             res.status(200).json({message:"Oops this time slot is not available !"})
         }
         else{
+            const code = await generateRoomCode();
             const appointment = {
                 doctorUid: doctorUid,
                 doctorName: doctorUser.name,
@@ -58,7 +69,7 @@ exports.bookAppointment = async(req,res)=>{
                 date: date,
                 time: time,
                 status: "Scheduled",
-                videoCallLink: ""
+                videoCallLink: code
             };
             doctorUser.notifications.push(`An appointment is requested by ${user.name} on ${date } at ${time}`);
             doctorUser.appointments.push(appointment);
