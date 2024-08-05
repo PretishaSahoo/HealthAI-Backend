@@ -42,7 +42,7 @@ exports.editDoctor = async (req, res) => {
       }
       const updatedUser = await User.findOneAndUpdate(
         {  uid: req.body.uid  },
-        {email:req.body.email, phone :req.body.phone},
+        {email:req.body.email, phone :req.body.phone ,name:req.body.name},
         { new: true }
       );
   
